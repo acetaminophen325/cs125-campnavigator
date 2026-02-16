@@ -53,14 +53,17 @@ def filter_candidates(
     day_token: str,
     now_min: int,
     cfg: RankConfig,
+    include_ongoing: bool = True,
 ) -> List[Tuple[Meeting, int, float]]:
     """
     Returns list of tuples: (meeting, minutes_until_start, distance_m)
     Filters:
       - occurs on day_token
-      - starts within [0, cfg.time_window_min]
+      - starts within [0, cfg.time_window_min] or is currently ongoing (if include_ongoing=True)
       - distance <= cfg.max_distance_m
       - building exists
+    
+    include_ongoing: if True, includes meetings that have already started but not ended.
     """
     user_lat, user_lon = user_latlon
     out: List[Tuple[Meeting, int, float]] = []
@@ -75,13 +78,17 @@ def filter_candidates(
         if b is None:
             continue
 
-        # Time window: starting soon
+        # Time window: starting soon or currently ongoing
         mins_until = minutes_until_start(m, now_min)
         if mins_until < 0:
-            # already started; for MVP we ignore ongoing meetings
-            # (you can change later to include ongoing)
-            continue
-        if mins_until > cfg.time_window_min:
+            # already started
+            if include_ongoing and now_min < m.end_min:
+                # Include if meeting is still ongoing (hasn't ended yet)
+                pass
+            else:
+                continue
+        if mins_until >= 0 and mins_until > cfg.time_window_min:
+            # Not yet started and too far in the future
             continue
 
         # Distance filter
@@ -104,15 +111,28 @@ def score_candidate(
     time_score and dist_score are normalized to [0,1], higher is better.
     """
     # Normalize time: 0 min until start => best (1.0), cfg.time_window_min => worst (0.0)
+    # Guard against zero/negative time_window_min
+    if cfg.time_window_min > 0:
+        time_score = 1.0 - (min_until / float(cfg.time_window_min))
+    else:
+        # If time window is not positive, default time_score based on whether meeting is starting soon
+        time_score = 1.0 if min_until <= 0 else 0.0
+    
     # Clamp to [0,1]
-    time_score = 1.0 - (min_until / float(cfg.time_window_min))
     if time_score < 0.0:
         time_score = 0.0
     elif time_score > 1.0:
         time_score = 1.0
 
     # Normalize distance: 0m => best (1.0), cfg.max_distance_m => worst (0.0)
-    dist_score = 1.0 - (dist_m / float(cfg.max_distance_m))
+    # Guard against zero/negative max_distance_m
+    if cfg.max_distance_m > 0:
+        dist_score = 1.0 - (dist_m / float(cfg.max_distance_m))
+    else:
+        # If max distance is not positive, default dist_score based on distance
+        dist_score = 1.0 if dist_m == 0 else 0.0
+    
+    # Clamp to [0,1]
     if dist_score < 0.0:
         dist_score = 0.0
     elif dist_score > 1.0:
@@ -130,9 +150,12 @@ def rank_meetings(
     now_min: int,
     cfg: RankConfig,
     top_k: int = 10,
+    include_ongoing: bool = True,
 ) -> List[RankedResult]:
     """
     End-to-end ranking: filter -> score -> sort desc -> return top_k results.
+    
+    include_ongoing: if True, includes meetings that are currently in progress.
     """
     candidates = filter_candidates(
         meetings=meetings,
@@ -141,6 +164,7 @@ def rank_meetings(
         day_token=day_token,
         now_min=now_min,
         cfg=cfg,
+        include_ongoing=include_ongoing,
     )
 
     ranked: List[RankedResult] = []
@@ -159,3 +183,16 @@ def rank_meetings(
 
     ranked.sort(key=lambda r: r.score, reverse=True)
     return ranked[:top_k]
+
+def fmt_time(mins: int) -> str:
+    """
+    Convert minutes since midnight to a human-readable time like '2:05pm'.
+    """
+    mins = int(mins)
+    h24 = mins // 60
+    m = mins % 60
+    ampm = "am" if h24 < 12 else "pm"
+    h12 = h24 % 12
+    if h12 == 0:
+        h12 = 12
+    return f"{h12}:{m:02d}{ampm}"
