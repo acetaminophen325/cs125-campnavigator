@@ -1,6 +1,7 @@
 # scripts/parse_websoc_json.py
 from __future__ import annotations
 
+import argparse
 import csv
 import json
 import re
@@ -404,4 +405,8 @@ def main(
 
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser(description="Parse WebSoc JSON into meetings.csv")
+    parser.add_argument("input_json", nargs="?", default="data/websoc_raw.json", help="Input JSON file (default: data/websoc_raw.json)")
+    parser.add_argument("-o", "--output", default="data/meetings.csv", help="Output CSV file (default: data/meetings.csv)")
+    args = parser.parse_args()
+    main(input_json=args.input_json, output_csv=args.output)
