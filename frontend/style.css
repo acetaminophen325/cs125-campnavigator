@@ -1,0 +1,398 @@
+/* ============================================================
+   Reset & base
+============================================================ */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --sidebar-w: 360px;
+  --blue:       #0064a4;   /* UCI blue */
+  --gold:       #ffd200;   /* UCI gold */
+  --blue-light: #e8f0f8;
+  --text:       #1a1a2e;
+  --muted:      #6b7280;
+  --border:     #d1d5db;
+  --radius:     8px;
+  --good:       #22c55e;
+  --mid:        #f59e0b;
+  --bad:        #ef4444;
+}
+
+html, body {
+  height: 100%;
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-size: 14px;
+  color: var(--text);
+  background: #f3f4f6;
+}
+
+/* ============================================================
+   Layout: sidebar + map side by side
+============================================================ */
+body {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+}
+
+#sidebar {
+  width: var(--sidebar-w);
+  min-width: var(--sidebar-w);
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+  z-index: 10;
+}
+
+#map-container {
+  flex: 1;
+  position: relative;
+}
+
+#map {
+  width: 100%;
+  height: 100%;
+}
+
+/* ============================================================
+   Header
+============================================================ */
+#app-header {
+  background: var(--blue);
+  color: #fff;
+  padding: 18px 16px 14px;
+}
+
+#app-header h1 {
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+#app-header .subtitle {
+  font-size: 12px;
+  opacity: 0.8;
+  margin-top: 3px;
+}
+
+/* ============================================================
+   Control sections
+============================================================ */
+.control-section {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.control-section h2 {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+
+label {
+  display: block;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+
+select,
+input[type="time"] {
+  width: 100%;
+  padding: 7px 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font-size: 13px;
+  color: var(--text);
+  background: #fff;
+  appearance: auto;
+}
+
+select:focus,
+input[type="time"]:focus {
+  outline: 2px solid var(--blue);
+  outline-offset: 1px;
+}
+
+.row-2col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.divider-or {
+  text-align: center;
+  font-size: 12px;
+  color: var(--muted);
+  margin: 10px 0;
+  position: relative;
+}
+
+.divider-or::before,
+.divider-or::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: 38%;
+  height: 1px;
+  background: var(--border);
+}
+
+.divider-or::before { left: 0; }
+.divider-or::after  { right: 0; }
+
+/* ============================================================
+   Buttons
+============================================================ */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  padding: 9px 12px;
+  border-radius: var(--radius);
+  border: none;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  transition: background 0.15s, opacity 0.15s;
+}
+
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  background: var(--blue);
+  color: #fff;
+}
+
+.btn-primary:not(:disabled):hover {
+  background: #004f82;
+}
+
+.btn-outline {
+  background: #fff;
+  color: var(--blue);
+  border: 1.5px solid var(--blue);
+}
+
+.btn-outline:hover {
+  background: var(--blue-light);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--muted);
+  font-weight: 400;
+  font-size: 12px;
+}
+
+.btn-ghost:hover {
+  color: var(--text);
+  background: #f3f4f6;
+}
+
+.btn-sm {
+  padding: 5px 8px;
+  width: auto;
+  margin-top: 8px;
+}
+
+/* ============================================================
+   Options row
+============================================================ */
+.options-row {
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.checkbox-label input[type="checkbox"] {
+  width: 15px;
+  height: 15px;
+  cursor: pointer;
+  accent-color: var(--blue);
+}
+
+/* ============================================================
+   Status / error text
+============================================================ */
+.status-text {
+  margin-top: 8px;
+  font-size: 12px;
+  color: var(--blue);
+  min-height: 16px;
+}
+
+.error-text {
+  margin-top: 6px;
+  font-size: 12px;
+  color: var(--bad);
+  min-height: 16px;
+}
+
+/* ============================================================
+   Results
+============================================================ */
+#results-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+#results-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px 8px;
+  border-bottom: 1px solid var(--border);
+}
+
+#results-header h2 {
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  margin: 0;
+}
+
+#results-count {
+  font-size: 11px;
+  background: var(--blue-light);
+  color: var(--blue);
+  padding: 2px 7px;
+  border-radius: 99px;
+  font-weight: 600;
+}
+
+#results-list {
+  list-style: none;
+  overflow-y: auto;
+  flex: 1;
+  padding: 8px 0;
+}
+
+/* ---- Result card ---- */
+.result-card {
+  padding: 10px 16px;
+  border-bottom: 1px solid #f0f0f0;
+  cursor: pointer;
+  transition: background 0.1s;
+}
+
+.result-card:hover,
+.result-card.active {
+  background: var(--blue-light);
+}
+
+.card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 2px;
+}
+
+.card-course {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.card-score {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 4px;
+  color: #fff;
+}
+
+.card-title {
+  font-size: 11px;
+  color: var(--muted);
+  margin-bottom: 5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.card-meta {
+  font-size: 11px;
+  color: var(--text);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+  margin-bottom: 6px;
+}
+
+.card-meta span {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+/* Score bar */
+.score-bar-track {
+  height: 4px;
+  background: #e5e7eb;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.score-bar-fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+
+/* ---- Empty / loading states ---- */
+.results-empty {
+  text-align: center;
+  padding: 32px 16px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+/* ============================================================
+   Responsive: narrow screens → stack vertically
+============================================================ */
+@media (max-width: 640px) {
+  body {
+    flex-direction: column;
+    overflow: auto;
+  }
+
+  #sidebar {
+    width: 100%;
+    min-width: 0;
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+    max-height: 60vh;
+  }
+
+  #map-container {
+    height: 40vh;
+    flex: none;
+  }
+}

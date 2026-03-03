@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>UCI Camp Navigator</title>
+
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- ================================================================
+       Left panel: controls + results
+  ================================================================ -->
+  <aside id="sidebar">
+    <header id="app-header">
+      <h1>UCI Camp Navigator</h1>
+      <p class="subtitle">Find nearby classes in real time</p>
+    </header>
+
+    <!-- ---- Location ---- -->
+    <section class="control-section">
+      <h2>Location</h2>
+
+      <button id="btn-geolocate" class="btn btn-outline">
+        <span class="icon">&#x25CE;</span> Use My Location
+      </button>
+
+      <div class="divider-or">or</div>
+
+      <label for="building-select">Select a building</label>
+      <select id="building-select">
+        <option value="">— choose a building —</option>
+      </select>
+
+      <p id="location-status" class="status-text"></p>
+    </section>
+
+    <!-- ---- Date & Time ---- -->
+    <section class="control-section">
+      <h2>Date &amp; Time</h2>
+
+      <div class="row-2col">
+        <div>
+          <label for="day-select">Day</label>
+          <select id="day-select">
+            <option value="M">Monday</option>
+            <option value="Tu">Tuesday</option>
+            <option value="W">Wednesday</option>
+            <option value="Th">Thursday</option>
+            <option value="F">Friday</option>
+            <option value="Sa">Saturday</option>
+            <option value="Su">Sunday</option>
+          </select>
+        </div>
+        <div>
+          <label for="time-input">Time</label>
+          <input id="time-input" type="time" />
+        </div>
+      </div>
+
+      <button id="btn-now" class="btn btn-ghost btn-sm">Reset to now</button>
+    </section>
+
+    <!-- ---- Options ---- -->
+    <section class="control-section options-row">
+      <label class="checkbox-label">
+        <input id="chk-ongoing" type="checkbox" checked />
+        Include ongoing classes
+      </label>
+    </section>
+
+    <!-- ---- CTA ---- -->
+    <section class="control-section">
+      <button id="btn-search" class="btn btn-primary" disabled>
+        Find Nearby Classes
+      </button>
+      <p id="search-error" class="error-text"></p>
+    </section>
+
+    <!-- ---- Results ---- -->
+    <section id="results-section" hidden>
+      <div id="results-header">
+        <h2>Results</h2>
+        <span id="results-count"></span>
+      </div>
+      <ul id="results-list"></ul>
+    </section>
+  </aside>
+
+  <!-- ================================================================
+       Right panel: map
+  ================================================================ -->
+  <main id="map-container">
+    <div id="map"></div>
+  </main>
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
